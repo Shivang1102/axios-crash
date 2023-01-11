@@ -59,16 +59,24 @@
                     removeUserFromScreen(user.email)
                 }
                 const parentnode=document.getElementById('listofusers');
-                const  childHtml=`<li id=${user.email}> ${user.name} - ${user.email}
-                    <button onclick=edituser('${user.email}','${user.name}')>Edit</button>
-                                        <button onclick=deleteUser('${user.email}')> Delete User </button>
+                const  childHtml=`<li id=${user._id}> ${user.name} - ${user.email}
+                    <button onclick=edituser('${user._id}','${user.name}')>Edit</button>
+                                        <button onclick=deleteUser('${user._id}')> Delete User </button>
                                      </li>`;
                 parentnode.innerHTML=parentnode.innerHTML+childHtml;
             }
-             function deleteUser(email){
-                console.log(email);
-                localStorage.removeItem(email);
-                removeUserFromScreen(email);
+             function deleteUser(userid){
+                axios.delete(`https://crudcrud.com/api/a0e4885f36ec4b75bfa49eec07a78bf7/appointmentdata/${userid}`)
+                .then((response)=>{
+                    removeUserFromScreen(userid)
+                  
+                })
+                .catch((err)=>{
+                    console.log(err);
+                })
+                // console.log(email);
+                // localStorage.removeItem(email);
+                // removeUserFromScreen(email);
             }
             function removeUserFromScreen(email){
                 const parentNode = document.getElementById('listofusers');
