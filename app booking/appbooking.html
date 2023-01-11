@@ -19,7 +19,7 @@
                     email:email
                 }
                 
-                axios.post("https://crudcrud.com/api/a0e4885f36ec4b75bfa49eec07a78bf/appointmentdata",details)
+                axios.post("https://crudcrud.com/api/a0e4885f36ec4b75bfa49eec07a78bf7/appointmentdata",details)
                 .then((response)=>{
                     showUserOnScren(response.data);
                     console.log(response)
@@ -33,15 +33,26 @@
             //    showUserOnScren(details)
             }
             window.addEventListener("DOMContentLoaded", () => {
-                const localStorageObj = localStorage;
-                const localstoragekeys  = Object.keys(localStorageObj)
+                axios.get('https://crudcrud.com/api/a0e4885f36ec4b75bfa49eec07a78bf7/appointmentdata')
+                .then((response)=>{
 
-                for(var i =0; i< localstoragekeys.length; i++){
-                    const key = localstoragekeys[i]
-                    const userDetailsString = localStorageObj[key];
-                    const userDetailsObj = JSON.parse(userDetailsString);
-                    showUserOnScren(userDetailsObj)
-                }
+                    console.log(response);
+                    for(var i=0;i<response.data.length;i++){
+                        showUserOnScren(response.data[i]);
+                    }
+                })
+                .catch((err)=>{
+                    console.log(err);
+                })
+                // const localStorageObj = localStorage;
+                // const localstoragekeys  = Object.keys(localStorageObj)
+
+                // for(var i =0; i< localstoragekeys.length; i++){
+                //     const key = localstoragekeys[i]
+                //     const userDetailsString = localStorageObj[key];
+                //     const userDetailsObj = JSON.parse(userDetailsString);
+                //     showUserOnScren(userDetailsObj)
+                // }
             })
             function showUserOnScren(user){
                 if(localStorage.getItem(user.email) !== null){
