@@ -1,0 +1,151 @@
+<html>
+
+<body>
+    <form onsubmit="savetolocalstroage(event)">
+        <label>Product cost</label>
+        <input id="username" type="number" name="username" />
+        <label>Product name</label>
+        <input id="email" type="text" name="emailId" />
+        <button>Add Product</button>
+    </form>
+    <ul id="listofusers">
+    
+        <h4>Products</h4>
+        
+
+    </ul>
+    <ul id="totalWorth">Total worth product:</ul>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.2/axios.min.js"></script>
+    <script>
+        var totalPrice=0;
+        function savetolocalstroage(event) {
+            event.preventDefault();
+            var name = event.target.username.value;
+            var email = event.target.emailId.value;
+            details = {
+                name: name,
+                email: email
+            }
+
+            axios.post("https://crudcrud.com/api/1b2a3fd1957045e0afc23ae186c7bcae/productlist", details)
+                .then((response) => {
+                    showUserOnScren(response.data);
+                    console.log(response)
+                })
+                .catch((err) => {
+                    document.body.innerHTML = document.body.innerHTML + "<h4>Something went wrong</h4>"
+                    console.log(err)
+                });
+
+            //     localStorage.setItem(details.email,JSON.stringify(details));
+            //    showUserOnScren(details)
+        }
+        window.addEventListener("DOMContentLoaded", () => {
+            axios.get('https://crudcrud.com/api/1b2a3fd1957045e0afc23ae186c7bcae/productlist')
+                .then((response) => {
+                      
+                   
+                    for (var i = 0; i < response.data.length; i++) {
+                        showUserOnScren(response.data[i]);
+                    }
+                })
+                .catch((err) => {
+                    console.log(err);
+                })
+            // const localStorageObj = localStorage;
+            // const localstoragekeys  = Object.keys(localStorageObj)
+
+            // for(var i =0; i< localstoragekeys.length; i++){
+            //     const key = localstoragekeys[i]
+            //     const userDetailsString = localStorageObj[key];
+            //     const userDetailsObj = JSON.parse(userDetailsString);
+            //     showUserOnScren(userDetailsObj)
+            // }
+        })
+        function showUserOnScren(user) {
+            if (localStorage.getItem(user.email) !== null) {
+                removeUserFromScreen(user.email)
+            }
+            const parentnode = document.getElementById('listofusers');
+            const childHtml = `<li id=${user._id}> ${user.name} - ${user.email}
+                    <button onclick=edituser('${user._id}','${user.name}','${user.email}')>Edit</button>
+                                        <button onclick=deleteUser('${user._id}')> Delete User </button>
+                                     </li>`;
+            parentnode.innerHTML = parentnode.innerHTML + childHtml;
+
+            let value = parseInt(details.name);
+             showTotalPrice(value);
+           // for clear inputs
+           username.value = "";
+             email.value = "";
+        }
+        function deleteUser(userid) {
+            decrementPrice(userid)
+            axios.delete(`https://crudcrud.com/api/1b2a3fd1957045e0afc23ae186c7bcae/productlist/${userid}`)
+                .then((response) => {
+                    removeUserFromScreen(userid)
+
+                })
+                .catch((err) => {
+                    console.log(err);
+                })
+            // console.log(email);
+            // localStorage.removeItem(email);
+            // removeUserFromScreen(email);
+        }
+        function removeUserFromScreen(email) {
+            const parentNode = document.getElementById('listofusers');
+            const childNodeToBeDeleted = document.getElementById(email);
+
+            if (childNodeToBeDeleted) {
+                parentNode.removeChild(childNodeToBeDeleted);
+            }
+        }
+        function edituser(userid, name, email) {
+            // axios.put(`https://crudcrud.com/api/a0e4885f36ec4b75bfa49eec07a78bf7/appointmentdata/${userid}`)
+            // .then((response)=>{
+            //     deleteUser(response)
+            //     document.getElementById('email').value=email;
+            //     document.getElementById('username').value=name;
+            // })
+            // .catch((err)=>{
+            //   console.log(err);
+            // })
+            document.getElementById('email').value = email;
+            document.getElementById('username').value = name;
+            deleteUser(userid);
+
+        }
+        function showTotalPrice(value) {
+        totalPrice = totalPrice + value;
+        const worth = document.getElementById("totalWorth");
+       const worthChild = `<h1 id="totalworth">${totalPrice} </h1>`;
+        worth.innerHTML = worthChild;
+        if (totalPrice == 0) {
+       worth.removeChild(totalworth);
+     }
+     }
+     
+     function showTotalPrice(value) {
+     totalPrice = totalPrice + value;
+     const worth = document.getElementById("totalWorth");
+     const worthChild = `<h4 id="totalworth">Total value Worth of product Rs:${totalPrice}</h4>`;
+     worth.innerHTML = worthChild;
+     if (totalPrice == 0) {
+    worth.removeChild(totalworth);
+  }
+}
+  function decrementPrice(id) {
+  axios.get(`https://crudcrud.com/api/1b2a3fd1957045e0afc23ae186c7bcae/productlist/${id}`).then((res) => {
+    let temp = parseInt(res.data.name);
+    totalPrice = totalPrice - temp;
+    showTotalPrice(0);
+  });
+}
+
+
+    </script>
+</body>
+
+</html>
